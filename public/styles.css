@@ -4,7 +4,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
 }
 
 h1 {
@@ -58,8 +58,28 @@ button:hover {
   width: 60%;
 }
 
+.quote-button-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.update-buttons {
+  display: none;
+}
+
+.individual-update-buttons {
+  display: flex;
+  flex-direction: row;
+}
+
 .single-quote {
   padding: 10px;
+  max-width: 40vw;
+}
+
+.single-quote:hover + .update-buttons,
+.update-buttons:hover {
+  display: inline-block;
 }
 
 .quote-text {
