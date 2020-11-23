@@ -24,27 +24,42 @@ app.get("/api/quotes", (req, res) => {
     let person = req.query.person;
     const filteredQuotes = quotes.filter((quote) => quote.person === person);
     res.send({ quotes: filteredQuotes });
-  } else {
-    res.send([]);
   }
 });
+
 //post new quotes
 app.post("/api/quotes", (req, res) => {
   const person = req.query.person;
   const quote = req.query.quote;
   const query = req.query;
+  const id = quotes.length;
   if (person && quote) {
-    quotes.push({ quote, person });
+    quotes.push({ id, quote, person });
     res.send({
-      quote: { quote, person },
+      quote: { id, quote, person },
     });
   } else {
     res.sendStatus(400);
   }
 });
+//edit quotes
+app.get("/quoteId/:id", (req, res) => {
+  const editedQuote = req.query.quote;
+  const editedAuthor = req.query.author;
+  const quoteId = Number(req.params.id);
+  const quoteIdx = quotes.findIndex((quote) => quote.id === quoteId);
+  quotes[quoteIdx].quote = editedQuote;
+  quotes[quoteIdx].person = editedAuthor;
+  res.redirect("/");
+});
+//delete quotes
+app.get("/delete/:id", (req, res) => {
+  const quoteId = Number(req.params.id);
+  const quoteIdx = quotes.findIndex((quote) => quote.id === quoteId);
+  quotes.splice(quoteIdx, 1);
 
-//update quote
-app.put();
+  res.redirect("/");
+});
 
 app.listen(PORT, () => {
   console.log("server started on port 4001");

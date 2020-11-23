@@ -17,9 +17,9 @@
   </head>
   <body>
     <h1>Quote API</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="add-quote.html">Add a New Quote</a>
+    <nav id="nav">
+      <a class="nav-item active" href="index.html">Home</a>
+      <a class="nav-item" href="add-quote.html">Add a New Quote</a>
     </nav>
     <h2>Get Quotes</h2>
     <div class="request-buttons">
@@ -32,6 +32,12 @@
         <button id="fetch-by-author">Fetch by Author</button>
       </div>
     </div>
+    <h4 class="success-message" style="display: none">
+      Quote editted successfully
+    </h4>
+    <h4 class="hover-info" style="display: none">
+      Hover over quote for editting options
+    </h4>
     <div id="quote-container"></div>
     <script src="script.js"></script>
   </body>

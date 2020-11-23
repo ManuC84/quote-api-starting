@@ -7,6 +7,7 @@ const buttonContainer = document.getElementById("button-container");
 const singleQuote = document.querySelector(".single-quote");
 const quoteText = document.querySelector(".quote");
 const attributionText = document.querySelector(".attribution");
+const navItem = document.querySelectorAll(".nav-item");
 
 const resetQuotes = () => {
   quoteContainer.innerHTML = "";
@@ -18,25 +19,57 @@ const renderError = (response) => {
 <p>${response.statusText}</p>`;
 };
 
+const editQuoteClick = (index) => {
+  document.querySelectorAll(".single-quote")[index].style.display = "none";
+  document.querySelectorAll(".edit-quote-container")[index].style.display =
+    "flex";
+  document.querySelectorAll(".individual-update-buttons")[index].style.display =
+    "none";
+};
+
+const closeEditQuoteClick = (index) => {
+  document.querySelectorAll(".single-quote")[index].style.display = "block";
+  document.querySelectorAll(".edit-quote-container")[index].style.display =
+    "none";
+  document.querySelectorAll(".individual-update-buttons")[index].style.display =
+    "block";
+};
+
 const renderQuotes = (quotes = []) => {
+  document.querySelector(".hover-info").style.display = "block";
   resetQuotes();
   if (quotes.length > 0) {
-    quotes.forEach((quote) => {
+    quotes.forEach((quote, index) => {
       const newQuote = document.createElement("div");
       newQuote.className = "single-quote";
       newQuote.innerHTML = `<div class="quote-text">${quote.quote}</div>
       <div class="attribution">- ${quote.person}</div>`;
+      const editQuoteInput = document.createElement("div");
+      editQuoteInput.className = "edit-quote";
+      editQuoteInput.innerHTML = `<div class="edit-quote-container" style="display: none;">
+        <button onclick="closeEditQuoteClick(${index})"><i class="tiny material-icons">close</i></button>
+        <form method="get" action="/quoteId/${quote.id}">
+          <div class="edit-form">  
+            <label class="edit-label" for="quote">Edit Quote</label>
+            <textarea id="quote" name="quote" rows="4" cols="50">${quote.quote}</textarea>
+            <label class="edit-label" for="author">Edit Author</label>
+            <textarea id="author" name="author">${quote.person}</textarea>
+            <button type="submit" value="Submit">Submit</button>
+          </div>  
+        </form>
+      </div>`;
       const editButtons = document.createElement("div");
       editButtons.className = "update-buttons";
       editButtons.innerHTML = `<div class="individual-update-buttons">
-      <button><i class="material-icons">create</i>
+      <button onclick="editQuoteClick(${index})"><i class="material-icons">create</i>
       </button>
-      <button><i class="material-icons">delete</i></button>
+      <button onclick="window.location.href='/delete/${quote.id}'"><i class="material-icons">delete</i></button>
     </div>`;
       const quoteButtonContainer = document.createElement("div");
       quoteButtonContainer.className = "quote-button-container";
       quoteButtonContainer.appendChild(newQuote);
       quoteButtonContainer.appendChild(editButtons);
+      quoteButtonContainer.appendChild(editQuoteInput);
       quoteContainer.appendChild(quoteButtonContainer);
     });
   } else {
