@@ -10,10 +10,12 @@ app.use(express.static("public"));
 
 //get random quotes
 app.get("/api/quotes/random", (req, res) => {
-  const quote = getRandomElement(quotes);
-  res.send({
-    quote,
-  });
+  if (quotes.length > 0) {
+    const quote = getRandomElement(quotes);
+    res.send({
+      quote,
+    });
+  }
 });
 //get all quotes if no author defined or else fetch by author
 app.get("/api/quotes", (req, res) => {
@@ -58,12 +60,15 @@ app.put("/api/quotes/:id", (req, res) => {
 });
 
 //delete quotes
-app.get("/delete/:id", (req, res) => {
+app.delete("/api/quotes/:id", (req, res) => {
   const quoteId = Number(req.params.id);
   const quoteIdx = quotes.findIndex((quote) => quote.id === quoteId);
-  quotes.splice(quoteIdx, 1);
-
-  res.redirect("/");
+  if (quoteIdx !== -1) {
+    quotes.splice(quoteIdx, 1);
+    res.status(200).send("quote deleted correctly");
+  } else {
+    res.status(404).send("Quote not found");
+  }
 });
 
 app.listen(PORT, () => {

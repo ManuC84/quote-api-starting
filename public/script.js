@@ -52,6 +52,16 @@ const editFetch = (index, id) => {
     });
 };
 
+const deleteFetch = (index, id) => {
+  if (confirm("Are you sure you want to delete this quote?")) {
+    fetch(`/api/quotes/${id}`, {
+      method: "DELETE",
+    });
+    document.querySelectorAll(".quote-button-container")[index].style.display =
+      "none";
+  }
+};
+
 const renderQuotes = (quotes = []) => {
   console.log(quotes);
   document.querySelector(".hover-info").style.display = "block";
@@ -79,7 +89,7 @@ const renderQuotes = (quotes = []) => {
       editButtons.innerHTML = `<div class="individual-update-buttons">
       <button onclick="editQuoteClick(${index}, ${quote.id})"><i class="material-icons">create</i>
       </button>
-      <button onclick="window.location.href='/delete/${quote.id}'"><i class="material-icons">delete</i></button>
+      <button onclick="deleteFetch(${index}, ${quote.id})"><i class="material-icons">delete</i></button>
     </div>`;
       const quoteButtonContainer = document.createElement("div");
       quoteButtonContainer.className = "quote-button-container";
