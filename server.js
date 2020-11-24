@@ -43,15 +43,20 @@ app.post("/api/quotes", (req, res) => {
   }
 });
 //edit quotes
-app.get("/quoteId/:id", (req, res) => {
+app.put("/api/quotes/:id", (req, res) => {
   const editedQuote = req.query.quote;
-  const editedAuthor = req.query.author;
+  const editedPerson = req.query.person;
   const quoteId = Number(req.params.id);
   const quoteIdx = quotes.findIndex((quote) => quote.id === quoteId);
-  quotes[quoteIdx].quote = editedQuote;
-  quotes[quoteIdx].person = editedAuthor;
-  res.redirect("/");
+  if (editedQuote && editedPerson) {
+    quotes[quoteIdx].quote = editedQuote;
+    quotes[quoteIdx].person = editedPerson;
+    res.send({
+      quote: { editedQuote, editedPerson },
+    });
+  }
 });
+
 //delete quotes
 app.get("/delete/:id", (req, res) => {
   const quoteId = Number(req.params.id);
