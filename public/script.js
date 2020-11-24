@@ -35,7 +35,25 @@ const closeEditQuoteClick = (index) => {
     "block";
 };
 
+const editFetch = (index, id) => {
+  const quote = document.querySelectorAll("#quote")[index].value;
+  const person = document.querySelectorAll("#person")[index].value;
+
+  fetch(`/api/quotes/${id}?quote=${quote}&person=${person}`, {
+    method: "PUT",
+  })
+    .then((response) => response.json())
+    .then(({ quote }) => {
+      closeEditQuoteClick(index);
+      document.querySelectorAll(".single-quote")[
+        index
+      ].innerHTML = `<div class="quote-text">${quote.editedQuote}</div>
+    <div class="attribution">- ${quote.editedPerson}</div>`;
+    });
+};
+
 const renderQuotes = (quotes = []) => {
+  console.log(quotes);
   document.querySelector(".hover-info").style.display = "block";
   resetQuotes();
   if (quotes.length > 0) {
@@ -48,20 +66,18 @@ const renderQuotes = (quotes = []) => {
       editQuoteInput.className = "edit-quote";
       editQuoteInput.innerHTML = `<div class="edit-quote-container" style="display: none;">
         <button onclick="closeEditQuoteClick(${index})"><i class="tiny material-icons">close</i></button>
-        <form method="get" action="/quoteId/${quote.id}">
           <div class="edit-form">  
             <label class="edit-label" for="quote">Edit Quote</label>
             <textarea id="quote" name="quote" rows="4" cols="50">${quote.quote}</textarea>
             <label class="edit-label" for="author">Edit Author</label>
-            <textarea id="author" name="author">${quote.person}</textarea>
-            <button type="submit" value="Submit">Submit</button>
+            <textarea id="person" name="person">${quote.person}</textarea>
+            <button onclick="editFetch(${index}, ${quote.id})">Submit</button>
           </div>  
-        </form>
-      </div>`;
+        </div>`;
       const editButtons = document.createElement("div");
       editButtons.className = "update-buttons";
       editButtons.innerHTML = `<div class="individual-update-buttons">
-      <button onclick="editQuoteClick(${index})"><i class="material-icons">create</i>
+      <button onclick="editQuoteClick(${index}, ${quote.id})"><i class="material-icons">create</i>
       </button>
       <button onclick="window.location.href='/delete/${quote.id}'"><i class="material-icons">delete</i></button>
     </div>`;
