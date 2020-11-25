@@ -75,7 +75,7 @@ const renderQuotes = (quotes = []) => {
       const editQuoteInput = document.createElement("div");
       editQuoteInput.className = "edit-quote";
       editQuoteInput.innerHTML = `<div class="edit-quote-container" style="display: none;">
-        <button onclick="closeEditQuoteClick(${index})"><i class="tiny material-icons">close</i></button>
+        <button onclick="closeEditQuoteClick(${index})"><i class="material-icons">close</i></button>
           <div class="edit-form">  
             <label class="edit-label" for="quote">Edit Quote</label>
             <textarea id="quote" name="quote" rows="4" cols="50">${quote.quote}</textarea>
