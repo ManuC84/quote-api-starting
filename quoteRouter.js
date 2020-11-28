@@ -3,6 +3,9 @@ const app = express();
 const quoteRouter = express.Router();
 const { quotes } = require("./data");
 const { getRandomElement } = require("./utils");
+const moongoose = require("mongoose");
+const Db = require("./schema");
+const dbData = require("./dbData");
 
 //get random quotes
 quoteRouter.get("/random", (req, res) => {
@@ -16,7 +19,8 @@ quoteRouter.get("/random", (req, res) => {
 //get all quotes if no author defined or else fetch by author
 quoteRouter.get("/", (req, res) => {
   if (!req.query.hasOwnProperty("person")) {
-    res.send({ quotes });
+    const mongoData = Db.collection("quotes").find({});
+    res.send({ mongoData });
   }
   if (req.query.hasOwnProperty("person")) {
     let person = req.query.person;
@@ -36,10 +40,12 @@ quoteRouter.post("/", (req, res) => {
     res.send({
       quote: { id, quote, person },
     });
+    Db.create({ id, quote, person });
   } else {
     res.sendStatus(400);
   }
 });
+
 //edit quotes
 quoteRouter.put("/:id", (req, res) => {
   const editedQuote = req.query.quote;
