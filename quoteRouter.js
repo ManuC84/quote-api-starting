@@ -5,27 +5,33 @@ const { quotes } = require("./data");
 const { getRandomElement } = require("./utils");
 const moongoose = require("mongoose");
 const Db = require("./schema");
-const dbData = require("./dbData");
 
 //get random quotes
 quoteRouter.get("/random", (req, res) => {
-  if (quotes.length > 0) {
-    const quote = getRandomElement(quotes);
-    res.send({
-      quote,
-    });
-  }
+  Db.find((err, data) => {
+    if (data.length > 0) {
+      const quote = getRandomElement(data);
+      res.send({ quote });
+    }
+  });
 });
 //get all quotes if no author defined or else fetch by author
 quoteRouter.get("/", (req, res) => {
   if (!req.query.hasOwnProperty("person")) {
-    const mongoData = Db.collection("quotes").find({});
-    res.send({ mongoData });
+    Db.find((err, data) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.status(200).send(data);
+      }
+    });
   }
   if (req.query.hasOwnProperty("person")) {
-    let person = req.query.person;
-    const filteredQuotes = quotes.filter((quote) => quote.person === person);
-    res.send({ quotes: filteredQuotes });
+    Db.find((err, data) => {
+      let person = req.query.person;
+      const filteredQuotes = data.filter((quote) => quote.person === person);
+      res.send({ quotes: filteredQuotes });
+    });
   }
 });
 
@@ -34,13 +40,20 @@ quoteRouter.post("/", (req, res) => {
   const person = req.query.person;
   const quote = req.query.quote;
   const query = req.query;
-  const id = quotes.length;
+  // const id = quotes.length;
+
   if (person && quote) {
-    quotes.push({ id, quote, person });
-    res.send({
-      quote: { id, quote, person },
+    Db.find((err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        const id = data.length;
+        res.send({
+          quote: { id, quote, person },
+        });
+        Db.create({ id, quote, person });
+      }
     });
-    Db.create({ id, quote, person });
   } else {
     res.sendStatus(400);
   }
@@ -51,25 +64,32 @@ quoteRouter.put("/:id", (req, res) => {
   const editedQuote = req.query.quote;
   const editedPerson = req.query.person;
   const quoteId = Number(req.params.id);
-  const quoteIdx = quotes.findIndex((quote) => quote.id === quoteId);
+  const updateId = { id: quoteId };
+  const updateQuotes = { quote: editedQuote, person: editedPerson };
   if (editedQuote && editedPerson) {
-    quotes[quoteIdx].quote = editedQuote;
-    quotes[quoteIdx].person = editedPerson;
-    res.send({
-      quote: { editedQuote, editedPerson },
-    });
+    try {
+      Db.updateOne(updateId, updateQuotes, function (err, res) {
+        if (err) throw err;
+      });
+      res.send({
+        quote: { editedQuote, editedPerson },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 });
 
 //delete quotes
 quoteRouter.delete("/:id", (req, res) => {
   const quoteId = Number(req.params.id);
-  const quoteIdx = quotes.findIndex((quote) => quote.id === quoteId);
-  if (quoteIdx !== -1) {
-    quotes.splice(quoteIdx, 1);
-    res.status(200).send("quote deleted correctly");
-  } else {
-    res.status(404).send("Quote not found");
+  const deleteId = { id: quoteId };
+  try {
+    Db.deleteOne(deleteId, (err, res) => {
+      if (err) throw err;
+    });
+  } catch (error) {
+    console.log(error);
   }
 });
 

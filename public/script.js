@@ -52,7 +52,7 @@ const editFetch = (index, id) => {
     });
 };
 
-const deleteFetch = (index, id) => {
+const deleteFetch = (index, id, data) => {
   if (confirm("Are you sure you want to delete this quote?")) {
     fetch(`/api/quotes/${id}`, {
       method: "DELETE",
@@ -64,9 +64,9 @@ const deleteFetch = (index, id) => {
 
 const renderQuotes = (quotes = []) => {
   console.log(quotes);
-  document.querySelector(".hover-info").style.display = "block";
   resetQuotes();
   if (quotes.length > 0) {
+    document.querySelector(".hover-info").style.display = "block";
     quotes.forEach((quote, index) => {
       const newQuote = document.createElement("div");
       newQuote.className = "single-quote";
@@ -100,6 +100,7 @@ const renderQuotes = (quotes = []) => {
     });
   } else {
     quoteContainer.innerHTML = "<p>Your request returned no quotes.</p>";
+    document.querySelector(".hover-info").style.display = "none";
   }
 };
 
@@ -113,7 +114,7 @@ fetchAllButton.addEventListener("click", () => {
       }
     })
     .then((response) => {
-      renderQuotes(response.quotes);
+      renderQuotes(response);
     });
 });
 
